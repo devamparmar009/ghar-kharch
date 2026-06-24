@@ -73,7 +73,7 @@ Both view the **same shared household ledger**, synced across their two devices.
 
 ## 6. Functional requirements — by screen
 
-The app has **4 screens** plus the Add-Expense sheet, kept deliberately small.
+The app has **5 screens** plus the Add-Expense sheet, kept deliberately small.
 
 ### 6.1 This Month (home — `index.html`)
 The screen mom opens every day.
@@ -100,13 +100,48 @@ The most-used flow, therefore the most optimized.
 - **Edit mode:** same sheet, prefilled, with a Delete action.
 
 ### 6.3 History (`history.html`)
+The plain ledger — for looking up *what was logged*, not for charts.
+
 - List of months (most recent first), each with its **total** and an over/under
   badge.
-- Tap a month → that month's view: **category breakdown** (simple horizontal bars
-  with amounts) + the full entry list for that month.
-- This satisfies "at the end of the month, how much did we spend" for any month.
+- Tap a month → its full **chronological entry list** (amount, category, note,
+  date), each row editable/deletable.
+- Filter within a month by category or note text (nice-to-have).
+- The *analytical* view of a month (breakdown, comparison, insights) lives in §6.4.
 
-### 6.4 Settings (`settings.html`)
+### 6.4 Analytics (`analytics.html`)
+The owner's "understand the spending" hub. Entirely **derived** from logged
+expenses — read-only, stores no new data. A **month selector** at the top scopes the
+month-specific blocks (defaults to the current month).
+
+**Core (always present)**
+
+- **Spending trend:** bar chart of total spend for the **last 6 months**, with the
+  monthly **limit drawn as a reference line**. Months over the limit read red. Tap a
+  bar to select that month.
+- **This month vs last month:** the headline comparison — total delta in ₹ and %
+  ("₹2,400 more than May, +15%"), plus **top movers** (the categories that rose or
+  fell most between the two months).
+- **Category breakdown:** for the selected month — horizontal bars with amount and
+  % per category, largest first.
+
+**Extras (all four included, per scope)**
+
+- **Smart insights:** a few auto-generated plain-language callouts — e.g. "Groceries
+  up 22% vs last month," "3 months in a row under budget," "Biggest single day:
+  ₹3,100 on Jun 12." Generated from the data with simple rules; degrade gracefully
+  when there isn't enough history.
+- **Pace & projection (current month only):** average spend per day so far, and a
+  **projected month-end total** (run-rate) with a verdict vs the limit ("on track to
+  spend ~₹27,800 — under budget").
+- **Biggest expenses:** the top 5 single expenses in the selected month.
+- **Yearly summary:** total spent this calendar year, monthly average, and the
+  highest/lowest months.
+
+Charts are **lightweight custom SVG/CSS** (or a tiny dependency-free renderer) to
+keep the minimal aesthetic and full offline/PWA behavior — no heavy chart library.
+
+### 6.5 Settings (`settings.html`)
 - **Monthly limit:** set/edit the single overall limit.
 - **Categories:** add / rename / recolor / pick icon / reorder; sensible defaults
   seeded on first run (see §10).
@@ -220,7 +255,8 @@ following the icon-chip pattern proven in the existing tracker.
 **Layout & chrome**
 
 - **Mobile-first**, single column, thumb-reachable primary actions; clean **bottom
-  tab bar** (This Month · History · Settings) and a prominent add affordance.
+  tab bar** (This Month · History · Analytics · Settings) and a prominent add
+  affordance.
 - **Its own identity**, distinct from the existing tracker (dark indigo→violet);
   this one is light and airy.
 - **No emoji** — a single inline-SVG icon library; line icons suit the minimal look.
@@ -241,10 +277,12 @@ following the icon-chip pattern proven in the existing tracker.
 - **Vanilla HTML/CSS/JS**, no build step. **PWA** (`manifest.json`, `sw.js`).
 - Deployable to **GitHub Pages** (same as existing tracker).
 - Proposed layout (mirrors the existing tracker for familiarity):
-  - `index.html` (This Month + Add sheet), `history.html`, `settings.html`
-  - `css/` — `tokens.css`, `main.css`, `components.css`
+  - `index.html` (This Month + Add sheet), `history.html`, `analytics.html`,
+    `settings.html`
+  - `css/` — `tokens.css`, `main.css`, `components.css`, `charts.css`
   - `js/` — `app.js`, `storage.js`, `sync.js`, `auth.js` (PIN), `home.js`,
-    `addexpense.js`, `history.js`, `settings.js`, `icons.js`, `format.js`
+    `addexpense.js`, `history.js`, `analytics.js`, `charts.js`, `settings.js`,
+    `icons.js`, `format.js`
   - `assets/`, `manifest.json`, `sw.js`
 - Final file breakdown is settled in the implementation plan.
 
@@ -258,6 +296,11 @@ following the icon-chip pattern proven in the existing tracker.
 - **Large numbers:** Indian grouping holds (₹12,34,567).
 - **Offline:** everything works; sync resumes when back online.
 - **Sync conflict:** merge by expense `id`; never silently drop entries.
+- **Sparse history (analytics):** with <2 months of data, the trend shows what
+  exists and the comparison/insights degrade gracefully ("not enough history yet").
+- **Projection early in the month:** run-rate from very few days is labelled a rough
+  estimate; guard against divide-by-zero on day 0 / zero entries.
+- **Empty categories:** breakdown and top-movers skip categories with no spend.
 
 ## 14. Testing strategy
 
@@ -268,9 +311,13 @@ following the icon-chip pattern proven in the existing tracker.
 - **Sync round-trip:** encrypt → Gist → decrypt on a second client yields identical
   data; conflicting edits merge without loss.
 - **PIN:** wrong PIN blocks entry; correct PIN unlocks; hash never stored plaintext.
+- **Analytics math:** 6-month trend aggregation, month-over-month delta/%, top
+  movers, run-rate projection, biggest-expenses ranking, and yearly summary compute
+  correctly — including sparse-history and zero-division edge cases.
 - **Manual mobile pass:** keypad entry, chip selection, save flow, reduced-motion.
 
 ## 15. Future (post-v1, not now)
 
 Per-category budgets · recurring-bill reminders · due-date notifications · income
-& savings · charts beyond simple bars · localization of labels (e.g. Hindi/Gujarati).
+& savings · advanced charts (donuts, weekday heatmaps, drill-downs) · localization
+of labels (e.g. Hindi/Gujarati).
