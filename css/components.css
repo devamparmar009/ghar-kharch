@@ -72,6 +72,17 @@
 .key { font-size: 20px; font-weight: 600; padding: 16px; border: none; background: var(--surface-2); border-radius: var(--radius-sm); min-height: 56px; cursor: pointer; }
 .key:active { background: #EFece4; }
 
+/* Settings rows + category editor */
+.row { display:flex; gap:8px; align-items:center; }
+.row input { flex:1; border:1px solid var(--rule-2); border-radius:var(--radius-sm); padding:12px; font-size:15px; background:var(--surface-2); }
+.cat-row { display:flex; align-items:center; gap:12px; padding:10px 0; border-bottom:1px solid var(--rule); }
+.cat-row span { flex:1; }
+.icon-grid, .color-grid { display:grid; grid-template-columns:repeat(6,1fr); gap:8px; margin:10px 0; }
+.icon-pick, .color-pick { aspect-ratio:1; border:1px solid var(--rule-2); border-radius:12px; background:var(--surface-2); display:flex; align-items:center; justify-content:center; }
+.color-pick { border:2px solid transparent; }
+.icon-pick.sel { border-color:var(--accent); color:var(--accent); }
+.color-pick.sel { border-color:var(--ink); }
+
 /* Month cards (History screen) */
 .month-card { padding: 0; margin-bottom: 10px; overflow: hidden; }
 .month-head { width:100%; display:flex; justify-content:space-between; align-items:center; background:none; border:none; padding:16px; text-align:left; cursor:pointer; }
