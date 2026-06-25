@@ -22,7 +22,7 @@ async function renderSettings() {
       <label class="btn btn-ghost btn-full" style="margin-top:8px">${icon('upload',18)} Import backup<input id="import" type="file" accept="application/json" hidden /></label>
       <button class="btn btn-danger btn-full" id="clear" style="margin-top:8px">${icon('trash',18)} Clear all data</button></section>`;
 
-  document.getElementById('save-limit').onclick = async () => { await setMonthlyLimit(document.getElementById('limit').value); showToast('Limit saved'); };
+  document.getElementById('save-limit').onclick = async () => { await setMonthlyLimit(Number(document.getElementById('limit').value)); showToast('Limit saved'); };
   document.getElementById('add-cat').onclick = () => openCategoryEditor(null, renderSettings);
   document.querySelectorAll('[data-del-cat]').forEach(b => b.onclick = async () => { if (await confirmDialog('Delete this category?')) { await deleteCategory(b.dataset.delCat); renderSettings(); } });
   document.getElementById('save-pin').onclick = async () => {
@@ -36,7 +36,7 @@ async function renderSettings() {
 
   function syncBoxHTML() {
     return isSyncEnabled()
-      ? `<div class="muted">Connected · last ${getSyncLastTime()||'—'}</div><button class="btn btn-ghost btn-full" id="sync-now" style="margin-top:8px">${icon('refresh',18)} Sync now</button><button class="btn btn-ghost btn-full" id="disconnect" style="margin-top:8px">Disconnect</button>`
+      ? `<div class="muted">Connected · last ${esc(getSyncLastTime()||'—')}</div><button class="btn btn-ghost btn-full" id="sync-now" style="margin-top:8px">${icon('refresh',18)} Sync now</button><button class="btn btn-ghost btn-full" id="disconnect" style="margin-top:8px">Disconnect</button>`
       : `<div class="muted">Paste a GitHub token (gist scope) to sync to your other phone. Use the SAME sync passphrase on both.</div><input id="token" type="password" placeholder="GitHub token" style="margin-top:8px" /><button class="btn btn-primary btn-full" id="connect" style="margin-top:8px">Connect</button>`;
   }
   function wireSync() {
