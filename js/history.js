@@ -6,6 +6,7 @@ async function renderHistory() {
   const catById = id => cats.find(c => c.id === id) || { label: 'Other', color: '#8A8F99', icon: 'tag' };
   const months = [...new Set(data.expenses.map(e => getMonthKey(e.date)))].sort().reverse();
   if (!_openMonth && months.length) _openMonth = months[0];
+  if (_openMonth && !months.includes(_openMonth)) _openMonth = months[0] || null;
 
   document.getElementById('screen').innerHTML = months.length ? months.map(mk => {
     const total = sumForMonth(data.expenses, mk);
@@ -14,7 +15,7 @@ async function renderHistory() {
     const rows = data.expenses.filter(e => getMonthKey(e.date) === mk).sort((a, b) => b.date.localeCompare(a.date) || b.createdAt - a.createdAt);
     return `<div class="month-card card">
       <button class="month-head" data-month="${mk}">
-        <div><div class="month-name">${getMonthLabel(mk)}</div><div class="muted">${rows.length} entries</div></div>
+        <div><div class="month-name">${getMonthLabel(mk)}</div><div class="muted">${rows.length} ${rows.length === 1 ? 'entry' : 'entries'}</div></div>
         <div class="month-right"><div class="month-total">${formatCurrency(total)}</div>${limit ? `<span class="pill ${over ? 'pill-bad' : 'pill-good'}">${over ? 'over' : 'under'}</span>` : ''}</div>
       </button>
       <div class="month-body" style="${open ? '' : 'display:none'}">
