@@ -3,7 +3,7 @@ const ASSETS = [
   'index.html','history.html','analytics.html','settings.html',
   'css/tokens.css','css/main.css','css/components.css','css/charts.css',
   'js/format.js','js/icons.js','js/crypto.js','js/storage.js','js/sync.js','js/auth.js','js/analytics.js','js/app.js','js/home.js','js/addexpense.js','js/history.js','js/charts.js','js/analytics-view.js','js/settings.js',
-  'manifest.json'
+  'manifest.json','assets/icon-192.png','assets/icon-512.png','assets/favicon.png'
 ];
 self.addEventListener('install', e => { e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS)).then(() => self.skipWaiting())); });
 self.addEventListener('activate', e => { e.waitUntil(caches.keys().then(ks => Promise.all(ks.filter(k => k !== CACHE).map(k => caches.delete(k)))).then(() => self.clients.claim())); });
