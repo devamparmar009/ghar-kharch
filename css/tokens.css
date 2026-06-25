@@ -1,0 +1,33 @@
+:root {
+  --bg:        #F7F5F0;
+  --surface:   #FFFFFF;
+  --surface-2: #FBFAF6;
+  --ink:       #1A1A17;
+  --ink-2:     #6B6A63;
+  --ink-3:     #9A988F;
+  --rule:      rgba(0,0,0,0.06);
+  --rule-2:    rgba(0,0,0,0.10);
+
+  --accent:     #2F9E83;
+  --accent-ink: #FFFFFF;
+  --accent-50:  #E6F4EE;
+  --accent-700: #1B7A5E;
+
+  --good:    #1B7A5E;  --good-bg: #E6F4EE;
+  --bad:     #C0492F;  --bad-bg:  #FBEAE5;
+  --warn:    #854F0B;  --warn-bg: #FAEEDA;
+
+  --radius:    20px;
+  --radius-sm: 14px;
+  --radius-pill: 999px;
+  --shadow:    0 1px 2px rgba(0,0,0,0.04), 0 8px 24px rgba(0,0,0,0.05);
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+
+  --space-1: 4px;  --space-2: 8px;  --space-3: 12px;
+  --space-4: 16px; --space-5: 20px; --space-6: 24px; --space-8: 32px;
+
+  --font-display: "Sora", system-ui, sans-serif;
+  --font-body: "Inter", system-ui, -apple-system, sans-serif;
+
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+}
