@@ -23,13 +23,13 @@ function paintNav() {
   const sl = document.getElementById('settings-link');
   if (sl) { sl.innerHTML = icon('settings', 22); sl.onclick = () => location.href = 'settings.html'; }
 }
-function confirmDialog(message) {
+function confirmDialog(message, confirmLabel = 'Delete') {
   return new Promise(resolve => {
     const o = document.createElement('div'); o.className = 'modal-overlay';
-    o.innerHTML = `<div class="modal card"><p>${message}</p><div class="modal-actions"><button class="btn btn-ghost" id="c-no">Cancel</button><button class="btn btn-danger" id="c-yes">Delete</button></div></div>`;
+    o.innerHTML = `<div class="modal card"><p>${message}</p><div class="modal-actions"><button class="btn btn-ghost modal-no">Cancel</button><button class="btn btn-danger modal-yes">${confirmLabel}</button></div></div>`;
     document.body.appendChild(o);
-    o.querySelector('#c-no').onclick = () => { o.remove(); resolve(false); };
-    o.querySelector('#c-yes').onclick = () => { o.remove(); resolve(true); };
+    o.querySelector('.modal-no').onclick = () => { o.remove(); resolve(false); };
+    o.querySelector('.modal-yes').onclick = () => { o.remove(); resolve(true); };
   });
 }
 function bootstrap(onReady) {
