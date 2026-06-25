@@ -31,3 +31,9 @@ test('label + day helpers', () => {
   assert.match(f.getCurrentMonthKey(), /^\d{4}-\d{2}$/);
   assert.strictEqual(f.generateUUID().length, 36);
 });
+
+test('esc escapes HTML-significant characters', () => {
+  assert.strictEqual(f.esc('<img src=x onerror=1>'), '&lt;img src=x onerror=1&gt;');
+  assert.strictEqual(f.esc('a & "b"'), 'a &amp; &quot;b&quot;');
+  assert.strictEqual(f.esc(null), '');
+});

@@ -48,7 +48,8 @@ function daysInMonth(key) {
   return new Date(y, m, 0).getDate();
 }
 function getDayOfMonth(dateStr) { return Number(String(dateStr).slice(8, 10)); }
+function esc(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
 
 if (typeof module !== 'undefined' && module.exports) {
-  module.exports = { formatCurrency, generateUUID, getTodayStr, getCurrentMonthKey, getMonthKey, getMonthLabel, getShortMonthLabel, getPrevMonthKey, getNextMonthKey, formatDate, daysInMonth, getDayOfMonth };
+  module.exports = { formatCurrency, generateUUID, getTodayStr, getCurrentMonthKey, getMonthKey, getMonthLabel, getShortMonthLabel, getPrevMonthKey, getNextMonthKey, formatDate, daysInMonth, getDayOfMonth, esc };
 }
