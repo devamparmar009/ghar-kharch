@@ -43,9 +43,12 @@ async function connectSync(token) {
     if (content) {
       const { ts, blob } = JSON.parse(content);
       const localTs = parseInt(localStorage.getItem(_SYNC_TS) || '0');
-      if (ts > localTs && await _canDecrypt(blob)) {
-        localStorage.setItem(_LS, blob); localStorage.setItem(_SYNC_TS, ts); clearDataCache();
-        return { action: 'pulled' };
+      if (ts > localTs) {
+        if (await _canDecrypt(blob)) {
+          localStorage.setItem(_LS, blob); localStorage.setItem(_SYNC_TS, ts); clearDataCache();
+          return { action: 'pulled' };
+        }
+        throw new Error('Passphrase mismatch — both phones must use the same sync passphrase.');
       }
     }
     await pushToGist(); return { action: 'pushed' };
