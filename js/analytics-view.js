@@ -42,7 +42,7 @@ async function renderAnalytics() {
     <section class="card"><div class="section-head"><span>Where it went</span></div>
       ${breakdown.length ? breakdownBars(breakdown) : `<span class="muted">No spending this month.</span>`}</section>
 
-    ${insights.length ? `<section class="card"><div class="section-head"><span>Insights</span></div>${insights.map(i => `<div class="insight">${icon('check', 16)} ${i}</div>`).join('')}</section>` : ''}
+    ${insights.length ? `<section class="card"><div class="section-head"><span>Insights</span></div>${insights.map(i => `<div class="insight">${icon('check', 16)} ${esc(i)}</div>`).join('')}</section>` : ''}
 
     ${biggest.length ? `<section class="card"><div class="section-head"><span>Biggest expenses</span></div>
       ${biggest.map(e => `<div class="entry"><div class="cat-chip" style="background:${catColor(e.category)}22;color:${catColor(e.category)}">${icon(catIcon(e.category), 19)}</div><div class="entry-main"><div class="entry-label">${esc(catLabel(e.category))}</div><div class="entry-note muted">${esc(e.note) || formatDate(e.date)}</div></div><div class="entry-amt">${formatCurrency(e.amount)}</div></div>`).join('')}</section>` : ''}
