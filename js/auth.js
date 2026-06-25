@@ -38,13 +38,13 @@ function renderSetup(overlay, done) {
       <button class="btn btn-primary btn-full" id="go">Get started</button>
     </div>`;
   document.getElementById('go').onclick = async () => {
-    const pp = pp1.value, pp_ = pp2.value, pin = pin1.value, pin_ = pin2.value, err = document.getElementById('aerr');
+    const pp = document.getElementById('pp1').value, pp_ = document.getElementById('pp2').value, pin = document.getElementById('pin1').value, pin_ = document.getElementById('pin2').value, err = document.getElementById('aerr');
     if (pp.length < 6) return show(err, 'Passphrase must be at least 6 characters.');
     if (pp !== pp_) return show(err, 'Passphrases do not match.');
     if (!/^\d{4,6}$/.test(pin)) return show(err, 'PIN must be 4–6 digits.');
     if (pin !== pin_) return show(err, 'PINs do not match.');
     const key = await deriveKey(pp);
-    localStorage.setItem(META_KEY, JSON.stringify({ passHash: await passphraseHash(pp), wrappedKey: await wrapKey(key, pin) }));
+    localStorage.setItem(META_KEY, JSON.stringify({ passHash: await passphraseHash(pp), wrappedKey: await wrapKey(key, pin), hasPin: true }));
     await _persistSession(key);
     clearDataCache(); await saveData(blankData());
     if (typeof syncOnLogin === 'function') await Promise.race([syncOnLogin(), new Promise(r => setTimeout(r, 5000))]);
@@ -82,10 +82,11 @@ function renderPassphraseUnlock(overlay, done) {
     </div>`;
   document.getElementById('go').onclick = async () => {
     const pp = document.getElementById('pp').value, np = document.getElementById('np').value, err = document.getElementById('aerr');
-    if (await passphraseHash(pp) !== _meta().passHash) { err.textContent = 'Wrong passphrase.'; err.style.display = 'block'; return; }
+    const meta = _meta();
+    if (await passphraseHash(pp) !== meta.passHash) { err.textContent = 'Wrong passphrase.'; err.style.display = 'block'; return; }
     if (!/^\d{4,6}$/.test(np)) { err.textContent = 'PIN must be 4–6 digits.'; err.style.display = 'block'; return; }
     const key = await deriveKey(pp);
-    const meta = _meta(); meta.wrappedKey = await wrapKey(key, np); localStorage.setItem(META_KEY, JSON.stringify(meta));
+    meta.wrappedKey = await wrapKey(key, np); localStorage.setItem(META_KEY, JSON.stringify(meta));
     await _persistSession(key); done();
   };
 }
