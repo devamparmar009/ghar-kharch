@@ -10,9 +10,11 @@ async function renderSettings() {
       <div id="cat-list">${data.categories.map(c=>`<div class="cat-row"><div class="cat-chip" style="background:${esc(c.color)}22;color:${esc(c.color)}">${icon(c.icon,18)}</div><span>${esc(c.label)}</span><button class="icon-btn" data-del-cat="${esc(c.id)}">${icon('trash',18)}</button></div>`).join('')}</div></section>
 
     <section class="card"><div class="section-head"><span>PIN</span></div>
-      <div class="row"><input id="cur-pin" type="password" inputmode="numeric" placeholder="Current PIN" maxlength="6" />
-      <input id="new-pin" type="password" inputmode="numeric" placeholder="New PIN" maxlength="6" />
-      <button class="btn btn-primary" id="save-pin">Change</button></div></section>
+      <div class="row" style="flex-direction:column">
+        <input id="cur-pin" type="password" inputmode="numeric" placeholder="Current PIN" maxlength="6" />
+        <input id="new-pin" type="password" inputmode="numeric" placeholder="New PIN" maxlength="6" />
+        <button class="btn btn-primary btn-full" id="save-pin">Change PIN</button>
+      </div></section>
 
     <section class="card"><div class="section-head"><span>Sync</span></div>
       <div id="sync-box">${syncBoxHTML()}</div></section>
@@ -37,7 +39,7 @@ async function renderSettings() {
   function syncBoxHTML() {
     return isSyncEnabled()
       ? `<div class="muted">Connected · last ${esc(getSyncLastTime()||'—')}</div><button class="btn btn-ghost btn-full" id="sync-now" style="margin-top:8px">${icon('refresh',18)} Sync now</button><button class="btn btn-ghost btn-full" id="disconnect" style="margin-top:8px">Disconnect</button>`
-      : `<div class="muted">Paste a GitHub token (gist scope) to sync to your other phone. Use the SAME sync passphrase on both.</div><input id="token" type="password" placeholder="GitHub token" style="margin-top:8px" /><button class="btn btn-primary btn-full" id="connect" style="margin-top:8px">Connect</button>`;
+      : `<div class="muted" style="margin-bottom:10px">Sync your expenses across devices. Paste a GitHub token below — both phones must use the same passphrase.</div><div class="row"><input id="token" type="password" placeholder="GitHub token" /></div><button class="btn btn-primary btn-full" id="connect" style="margin-top:8px">Connect</button>`;
   }
   function wireSync() {
     const connect = document.getElementById('connect');
