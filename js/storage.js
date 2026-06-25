@@ -65,10 +65,10 @@ async function getExpensesForMonth(monthKey) {
   const data = await getData();
   return data.expenses.filter(e => getMonthKey(e.date) === monthKey);
 }
-async function getMonthlyLimit() { return (await getData()).monthlyLimit || 0; }
+async function getMonthlyLimit() { const d = await getData(); return d ? (d.monthlyLimit || 0) : DEFAULT_LIMIT; }
 async function setMonthlyLimit(n) { const d = await getData(); d.monthlyLimit = Number(n); await saveData(d); }
 async function getCategories() { return (await getData()).categories; }
-async function addCategory(cat) { const d = await getData(); cat.id = generateUUID(); d.categories.push(cat); await saveData(d); return cat; }
+async function addCategory(cat) { const d = await getData(); const newCat = { ...cat, id: generateUUID() }; d.categories.push(newCat); await saveData(d); return newCat; }
 async function updateCategory(id, u) { const d = await getData(); const i = d.categories.findIndex(c => c.id === id); if (i > -1) { d.categories[i] = { ...d.categories[i], ...u }; await saveData(d); } }
 async function deleteCategory(id) { const d = await getData(); d.categories = d.categories.filter(c => c.id !== id); await saveData(d); }
 async function exportJSON() {
@@ -86,6 +86,8 @@ async function importJSON(input, mode = 'replace') {
   const cur = await getData();
   const ids = new Set(cur.expenses.map(e => e.id));
   cur.expenses.push(...imp.expenses.filter(e => !ids.has(e.id)));
+  const catIds = new Set(cur.categories.map(c => c.id));
+  cur.categories.push(...imp.categories.filter(c => !catIds.has(c.id)));
   await saveData(cur);
 }
 async function clearAllData() { _cache = null; await saveData(blankData()); }

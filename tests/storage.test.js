@@ -41,3 +41,18 @@ test('monthly limit round-trips', async () => {
   await s.setMonthlyLimit(30000);
   assert.strictEqual(await s.getMonthlyLimit(), 30000);
 });
+
+test('getMonthlyLimit returns DEFAULT_LIMIT on an uninitialized store', async () => {
+  localStorage.clear(); s.clearDataCache();
+  assert.strictEqual(await s.getMonthlyLimit(), s.DEFAULT_LIMIT);
+});
+
+test('importJSON merge mode merges new categories and expenses by id', async () => {
+  localStorage.clear(); s.clearDataCache();
+  s.setSessionKey(await c.deriveKey('pw'));
+  await s.saveData(s.blankData());
+  await s.importJSON({ expenses: [{ id: 'e9', amount: 99, category: 'other', note: '', date: '2026-06-01' }], categories: [{ id: 'custom1', label: 'Custom', icon: 'tag', color: '#000' }] }, 'merge');
+  const data = await s.getData();
+  assert.ok(data.categories.some(x => x.id === 'custom1'));
+  assert.ok(data.expenses.some(x => x.id === 'e9'));
+});
