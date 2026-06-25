@@ -92,6 +92,21 @@ async function importJSON(input, mode = 'replace') {
 }
 async function clearAllData() { _cache = null; await saveData(blankData()); }
 
+function mergeData(local, remote) {
+  if (!local) return remote;
+  if (!remote) return local;
+  const stamp = e => (e.updatedAt || e.createdAt || 0);
+  const byId = {};
+  (remote.expenses || []).forEach(e => { byId[e.id] = e; });
+  (local.expenses || []).forEach(e => { const ex = byId[e.id]; if (!ex || stamp(e) >= stamp(ex)) byId[e.id] = e; });
+  const catById = {};
+  (remote.categories || []).forEach(c => { catById[c.id] = c; });
+  (local.categories || []).forEach(c => { catById[c.id] = c; });
+  // Keep the saving device's settings (monthlyLimit/currency/version); union the arrays.
+  // NOTE: union merge — a deletion may not propagate if the other device still holds the item (acceptable for a single-logger household per spec §8).
+  return { ...remote, ...local, expenses: Object.values(byId), categories: Object.values(catById) };
+}
+
 if (typeof module !== 'undefined' && module.exports) {
-  module.exports = { STORAGE_KEY, DEFAULT_LIMIT, DEFAULT_CATEGORIES, PRESET_COLORS, setSessionKey, getSessionKey, clearDataCache, blankData, getData, saveData, addExpense, updateExpense, deleteExpense, getExpensesForMonth, getMonthlyLimit, setMonthlyLimit, getCategories, addCategory, updateCategory, deleteCategory, exportJSON, importJSON, clearAllData };
+  module.exports = { STORAGE_KEY, DEFAULT_LIMIT, DEFAULT_CATEGORIES, PRESET_COLORS, setSessionKey, getSessionKey, clearDataCache, blankData, getData, saveData, addExpense, updateExpense, deleteExpense, getExpensesForMonth, getMonthlyLimit, setMonthlyLimit, getCategories, addCategory, updateCategory, deleteCategory, exportJSON, importJSON, clearAllData, mergeData };
 }

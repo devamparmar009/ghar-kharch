@@ -23,6 +23,6 @@ function wireBars(root, onSelect) {
 function breakdownBars(items) {
   return items.map(c => `<div class="bd-row">
     <div class="bd-head"><span>${esc(c.label)}</span><span class="muted">${formatCurrency(c.total)} · ${c.pct}%</span></div>
-    <div class="bd-track"><div class="bd-fill" style="width:${c.pct}%;background:${c.color}"></div></div>
+    <div class="bd-track"><div class="bd-fill" style="width:${c.pct}%;background:${esc(c.color)}"></div></div>
   </div>`).join('');
 }

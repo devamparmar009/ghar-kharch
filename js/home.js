@@ -37,7 +37,7 @@ async function renderHome() {
   function rowHTML(e) {
     const c = catById(e.category);
     return `<div class="entry" data-edit="${esc(e.id)}">
-      <div class="cat-chip" style="background:${c.color}22;color:${c.color}">${icon(c.icon,19)}</div>
+      <div class="cat-chip" style="background:${esc(c.color)}22;color:${esc(c.color)}">${icon(c.icon,19)}</div>
       <div class="entry-main"><div class="entry-label">${esc(c.label)}</div><div class="entry-note muted">${e.note ? esc(e.note) : formatDate(e.date)}</div></div>
       <div class="entry-amt">${formatCurrency(e.amount)}</div>
     </div>`;

@@ -11,7 +11,7 @@ async function openAddSheet(expense) {
     <div class="sheet card">
       <div class="sheet-head"><span>${editing ? 'Edit expense' : 'Add expense'}</span><button class="icon-btn" id="close">${icon('x',22)}</button></div>
       <div class="amount-display" id="amt">₹0</div>
-      <div class="chips" id="chips">${cats.map(c => `<button class="chip ${c.id===category?'sel':''}" data-cat="${c.id}" style="--c:${c.color}">${icon(c.icon,18)}<span>${esc(c.label)}</span></button>`).join('')}</div>
+      <div class="chips" id="chips">${cats.map(c => `<button class="chip ${c.id===category?'sel':''}" data-cat="${esc(c.id)}" style="--c:${esc(c.color)}">${icon(c.icon,18)}<span>${esc(c.label)}</span></button>`).join('')}</div>
       <input class="note-input" id="note" placeholder="Note (optional)" value="${esc(editing ? (expense.note||'') : '')}" />
       <input class="date-input" id="date" type="date" value="${date}" />
       <div class="keypad" id="keypad">${['1','2','3','4','5','6','7','8','9','.','0','del'].map(k => `<button class="key" data-k="${k}">${k==='del'?icon('backspace',20):k}</button>`).join('')}</div>

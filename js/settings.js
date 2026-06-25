@@ -7,7 +7,7 @@ async function renderSettings() {
       <div class="row"><input id="limit" type="number" inputmode="numeric" value="${limit}" /><button class="btn btn-primary" id="save-limit">Save</button></div></section>
 
     <section class="card"><div class="section-head"><span>Categories</span><button class="icon-btn" id="add-cat">${icon('plus',20)}</button></div>
-      <div id="cat-list">${data.categories.map(c=>`<div class="cat-row"><div class="cat-chip" style="background:${c.color}22;color:${c.color}">${icon(c.icon,18)}</div><span>${esc(c.label)}</span><button class="icon-btn" data-del-cat="${c.id}">${icon('trash',18)}</button></div>`).join('')}</div></section>
+      <div id="cat-list">${data.categories.map(c=>`<div class="cat-row"><div class="cat-chip" style="background:${esc(c.color)}22;color:${esc(c.color)}">${icon(c.icon,18)}</div><span>${esc(c.label)}</span><button class="icon-btn" data-del-cat="${esc(c.id)}">${icon('trash',18)}</button></div>`).join('')}</div></section>
 
     <section class="card"><div class="section-head"><span>PIN</span></div>
       <div class="row"><input id="cur-pin" type="password" inputmode="numeric" placeholder="Current PIN" maxlength="6" />

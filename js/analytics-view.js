@@ -45,7 +45,7 @@ async function renderAnalytics() {
     ${insights.length ? `<section class="card"><div class="section-head"><span>Insights</span></div>${insights.map(i => `<div class="insight">${icon('check', 16)} ${esc(i)}</div>`).join('')}</section>` : ''}
 
     ${biggest.length ? `<section class="card"><div class="section-head"><span>Biggest expenses</span></div>
-      ${biggest.map(e => `<div class="entry"><div class="cat-chip" style="background:${catColor(e.category)}22;color:${catColor(e.category)}">${icon(catIcon(e.category), 19)}</div><div class="entry-main"><div class="entry-label">${esc(catLabel(e.category))}</div><div class="entry-note muted">${esc(e.note) || formatDate(e.date)}</div></div><div class="entry-amt">${formatCurrency(e.amount)}</div></div>`).join('')}</section>` : ''}
+      ${biggest.map(e => `<div class="entry"><div class="cat-chip" style="background:${esc(catColor(e.category))}22;color:${esc(catColor(e.category))}">${icon(catIcon(e.category), 19)}</div><div class="entry-main"><div class="entry-label">${esc(catLabel(e.category))}</div><div class="entry-note muted">${esc(e.note) || formatDate(e.date)}</div></div><div class="entry-amt">${formatCurrency(e.amount)}</div></div>`).join('')}</section>` : ''}
 
     ${yr ? `<section class="card"><div class="section-head"><span>${cur.slice(0, 4)} so far</span></div>
       <div class="year-grid"><div><div class="muted">Total</div><div class="pace-num">${formatCurrency(yr.total)}</div></div>

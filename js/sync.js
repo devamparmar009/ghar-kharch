@@ -48,6 +48,7 @@ async function connectSync(token) {
           localStorage.setItem(_LS, blob); localStorage.setItem(_SYNC_TS, ts); clearDataCache();
           return { action: 'pulled' };
         }
+        localStorage.removeItem(_SYNC_TOKEN);
         throw new Error('Passphrase mismatch — both phones must use the same sync passphrase.');
       }
     }
@@ -60,9 +61,27 @@ async function connectSync(token) {
 }
 async function pushToGist(blobParam) {
   if (!isSyncEnabled()) return;
-  const blob = blobParam || localStorage.getItem(_LS); if (!blob) return;
+  let localBlob = blobParam || localStorage.getItem(_LS);
+  if (!localBlob) return;
+  const gistId = localStorage.getItem(_SYNC_GIST);
+  try {
+    const gist = await _api('GET', '/' + gistId);
+    const content = gist.files[_GIST_FILE] && gist.files[_GIST_FILE].content;
+    if (content) {
+      const { blob: remoteBlob } = JSON.parse(content);
+      const key = getSessionKey();
+      const local = await decryptData(localBlob, key);
+      const remote = remoteBlob ? await decryptData(remoteBlob, key) : null;
+      if (local && remote) {
+        const merged = mergeData(local, remote);
+        localBlob = await encryptData(merged, key);
+        localStorage.setItem(_LS, localBlob);
+        clearDataCache();
+      }
+    }
+  } catch (e) { console.warn('Pre-push merge failed, pushing local copy:', e); }
   const ts = Date.now();
-  await _api('PATCH', '/' + localStorage.getItem(_SYNC_GIST), { files: { [_GIST_FILE]: { content: JSON.stringify({ ts, blob }) } } });
+  await _api('PATCH', '/' + gistId, { files: { [_GIST_FILE]: { content: JSON.stringify({ ts, blob: localBlob }) } } });
   localStorage.setItem(_SYNC_TS, ts);
 }
 async function pullFromGist() {

@@ -47,6 +47,16 @@ test('getMonthlyLimit returns DEFAULT_LIMIT on an uninitialized store', async ()
   assert.strictEqual(await s.getMonthlyLimit(), s.DEFAULT_LIMIT);
 });
 
+test('mergeData unions expenses/categories by id, prefers newer updatedAt, keeps local settings', () => {
+  const local = { version:1, monthlyLimit:30000, currency:'INR', categories:[{id:'a'},{id:'groceries'}], expenses:[{id:'1',amount:100,updatedAt:200},{id:'2',amount:50,updatedAt:100}] };
+  const remote = { version:1, monthlyLimit:25000, currency:'INR', categories:[{id:'b'},{id:'groceries'}], expenses:[{id:'1',amount:999,updatedAt:100},{id:'3',amount:70,updatedAt:50}] };
+  const m = s.mergeData(local, remote);
+  assert.strictEqual(m.expenses.find(e=>e.id==='1').amount, 100);      // local newer wins
+  assert.deepStrictEqual(m.expenses.map(e=>e.id).sort(), ['1','2','3']); // union
+  assert.deepStrictEqual([...new Set(m.categories.map(c=>c.id))].sort(), ['a','b','groceries']);
+  assert.strictEqual(m.monthlyLimit, 30000);                            // local settings kept
+});
+
 test('importJSON merge mode merges new categories and expenses by id', async () => {
   localStorage.clear(); s.clearDataCache();
   s.setSessionKey(await c.deriveKey('pw'));
