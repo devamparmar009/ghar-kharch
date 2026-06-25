@@ -26,6 +26,7 @@ async function openAddSheet(expense) {
   const close = () => { sheet.classList.remove('open'); setTimeout(() => sheet.remove(), 250); };
 
   sheet.querySelector('#close').onclick = close;
+  sheet.addEventListener('click', e => { if (e.target === sheet) close(); });
   sheet.querySelector('#keypad').onclick = e => {
     const k = e.target.closest('.key')?.dataset.k; if (!k) return;
     if (k === 'del') amount = amount.slice(0, -1);
