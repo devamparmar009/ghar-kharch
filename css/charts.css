@@ -1,0 +1,38 @@
+/* charts.css — Analytics screen styles */
+
+.month-select { margin-bottom: 12px; }
+
+/* Bar chart */
+.bars { position: relative; display: flex; align-items: flex-end; justify-content: space-between; gap: 8px; height: 130px; padding-top: 8px; }
+.limit-line { position: absolute; left: 0; right: 0; border-top: 1px dashed #C9A24A; z-index: 1; }
+.bar-col { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 6px; height: 100%; justify-content: flex-end; background: none; border: none; cursor: pointer; padding: 0; }
+.bar { width: 100%; background: #CFE3DB; border-radius: 6px; transition: height .5s var(--ease-out, cubic-bezier(0.25,1,0.5,1)); }
+.bar.over { background: var(--bad); }
+.bar.sel { background: var(--accent); }
+.bar-label { font-size: 11px; color: var(--ink-3); }
+
+/* Comparison */
+.cmp-num { font-family: var(--font-display); font-weight: 800; font-size: 1.6rem; }
+.cmp-head { display: flex; align-items: baseline; gap: 8px; }
+.movers { margin-top: 10px; border-top: 1px solid var(--rule); padding-top: 8px; }
+.mover { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 4px; }
+
+/* Category breakdown */
+.bd-row { margin-bottom: 12px; }
+.bd-head { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 5px; }
+.bd-track { height: 7px; background: #EEEAE2; border-radius: var(--radius-pill, 999px); }
+.bd-fill { height: 100%; border-radius: var(--radius-pill, 999px); }
+
+/* Pace & yearly grids */
+.pace-grid, .year-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.pace-num { font-family: var(--font-display); font-weight: 700; font-size: 1.2rem; }
+
+/* Insights */
+.insight { display: flex; gap: 8px; align-items: center; font-size: 14px; margin-bottom: 8px; color: var(--ink); }
+.insight .icon { color: var(--accent); flex-shrink: 0; }
+
+/* Card spacing */
+.card + .card, section.card { margin-top: 12px; }
+
+/* Month selector modal */
+.btn-full { width: 100%; text-align: left; }
