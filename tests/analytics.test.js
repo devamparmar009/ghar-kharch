@@ -14,9 +14,12 @@ const exp = [
   { id: '5', amount: 4000, category: 'groceries', date: '2026-06-12' }
 ];
 
-test('sumForMonth totals one month', () => {
+test('sumForMonth totals one month, skips deleted tombstones', () => {
   assert.strictEqual(a.sumForMonth(exp, '2026-06'), 6500);
   assert.strictEqual(a.sumForMonth(exp, '2026-05'), 1500);
+  // tombstone must not contribute to the total
+  const withTombstone = [...exp, { id: '9', amount: 9999, category: 'groceries', date: '2026-06-15', deleted: true }];
+  assert.strictEqual(a.sumForMonth(withTombstone, '2026-06'), 6500);
 });
 
 test('monthlyTotals returns n months oldest→newest', () => {

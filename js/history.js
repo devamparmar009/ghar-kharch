@@ -4,7 +4,7 @@ async function renderHistory() {
   const [data, limit] = [await getData(), await getMonthlyLimit()];
   const cats = data.categories;
   const catById = id => cats.find(c => c.id === id) || { label: 'Other', color: '#8A8F99', icon: 'tag' };
-  const months = [...new Set(data.expenses.map(e => getMonthKey(e.date)))].sort().reverse();
+  const months = [...new Set(data.expenses.filter(e => !e.deleted).map(e => getMonthKey(e.date)))].sort().reverse();
   if (!_openMonth && months.length) _openMonth = months[0];
   if (_openMonth && !months.includes(_openMonth)) _openMonth = months[0] || null;
 
@@ -12,7 +12,7 @@ async function renderHistory() {
     const total = sumForMonth(data.expenses, mk);
     const over = limit && total > limit;
     const open = mk === _openMonth;
-    const rows = data.expenses.filter(e => getMonthKey(e.date) === mk).sort((a, b) => b.date.localeCompare(a.date) || b.createdAt - a.createdAt);
+    const rows = data.expenses.filter(e => !e.deleted && getMonthKey(e.date) === mk).sort((a, b) => b.date.localeCompare(a.date) || b.createdAt - a.createdAt);
     return `<div class="month-card card">
       <button class="month-head" data-month="${mk}">
         <div><div class="month-name">${getMonthLabel(mk)}</div><div class="muted">${rows.length} ${rows.length === 1 ? 'entry' : 'entries'}</div></div>

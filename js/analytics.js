@@ -1,7 +1,7 @@
 if (typeof module !== 'undefined' && module.exports) {
   var { getMonthKey, getPrevMonthKey, getShortMonthLabel, daysInMonth, formatCurrency } = require('./format.js');
 }
-function _inMonth(expenses, monthKey) { return expenses.filter(e => getMonthKey(e.date) === monthKey); }
+function _inMonth(expenses, monthKey) { return expenses.filter(e => !e.deleted && getMonthKey(e.date) === monthKey); }
 function sumForMonth(expenses, monthKey) { return _inMonth(expenses, monthKey).reduce((s, e) => s + Number(e.amount), 0); }
 
 function monthlyTotals(expenses, endMonthKey, n = 6) {

@@ -8,7 +8,7 @@ async function renderHome() {
   const pct = limit ? Math.min(Math.round((total / limit) * 100), 999) : 0;
   const cats = data.categories;
   const catById = id => cats.find(c => c.id === id) || { label: 'Other', color: '#8A8F99', icon: 'tag' };
-  const recent = expenses.filter(x => x.date && getMonthKey(x.date) === monthKey).sort((a, b) => b.createdAt - a.createdAt).slice(0, 6);
+  const recent = expenses.filter(x => !x.deleted && x.date && getMonthKey(x.date) === monthKey).sort((a, b) => b.createdAt - a.createdAt).slice(0, 6);
   document.querySelector('.app-title').textContent = getMonthLabel(monthKey);
 
   const verdict = !limit

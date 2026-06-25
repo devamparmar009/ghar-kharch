@@ -58,12 +58,15 @@ async function updateExpense(id, updates) {
 }
 async function deleteExpense(id) {
   const data = await getData();
-  data.expenses = data.expenses.filter(e => e.id !== id);
+  const i = data.expenses.findIndex(e => e.id === id);
+  if (i === -1) return;
+  // Soft-delete: tombstone propagates through sync via updatedAt wins in mergeData
+  data.expenses[i] = { ...data.expenses[i], deleted: true, updatedAt: Date.now() };
   await saveData(data);
 }
 async function getExpensesForMonth(monthKey) {
   const data = await getData();
-  return data.expenses.filter(e => getMonthKey(e.date) === monthKey);
+  return data.expenses.filter(e => !e.deleted && getMonthKey(e.date) === monthKey);
 }
 async function getMonthlyLimit() { const d = await getData(); return d ? (d.monthlyLimit || 0) : DEFAULT_LIMIT; }
 async function setMonthlyLimit(n) { const d = await getData(); d.monthlyLimit = Number(n); await saveData(d); }

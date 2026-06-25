@@ -31,7 +31,11 @@ test('updateExpense and deleteExpense mutate the right row', async () => {
   assert.strictEqual(all[0].amount, 150);
   await s.deleteExpense(e.id);
   all = (await s.getData()).expenses;
-  assert.strictEqual(all.length, 0);
+  // soft-delete: record stays as tombstone, not returned by getExpensesForMonth
+  assert.strictEqual(all.length, 1);
+  assert.strictEqual(all[0].deleted, true);
+  const month = await s.getExpensesForMonth('2026-06');
+  assert.strictEqual(month.length, 0);
 });
 
 test('monthly limit round-trips', async () => {
@@ -55,6 +59,15 @@ test('mergeData unions expenses/categories by id, prefers newer updatedAt, keeps
   assert.deepStrictEqual(m.expenses.map(e=>e.id).sort(), ['1','2','3']); // union
   assert.deepStrictEqual([...new Set(m.categories.map(c=>c.id))].sort(), ['a','b','groceries']);
   assert.strictEqual(m.monthlyLimit, 30000);                            // local settings kept
+});
+
+test('mergeData propagates tombstone: delete on one device wins via updatedAt', () => {
+  // mom deletes expense '1' (tombstone at T=500); laptop still has original (T=100)
+  const mom   = { version:1, monthlyLimit:25000, currency:'INR', categories:[], expenses:[{id:'1',amount:100,deleted:true,updatedAt:500}] };
+  const laptop = { version:1, monthlyLimit:25000, currency:'INR', categories:[], expenses:[{id:'1',amount:100,updatedAt:100}] };
+  const merged = s.mergeData(mom, laptop);   // mom is local, laptop is remote
+  const e = merged.expenses.find(x => x.id === '1');
+  assert.strictEqual(e.deleted, true);       // tombstone survives the merge
 });
 
 test('importJSON merge mode merges new categories and expenses by id', async () => {
