@@ -29,5 +29,7 @@ test('PIN wraps/unwraps the key; wrong PIN returns null; changing PIN keeps the 
   assert.notStrictEqual(unwrapped, null);
   const blob = await c.encryptData({ ok: true }, key);
   assert.deepStrictEqual(await c.decryptData(blob, unwrapped), { ok: true });
+  const rewrapped = await c.wrapKey(unwrapped, '5678');
+  assert.deepStrictEqual(await c.decryptData(blob, await c.unwrapKey(rewrapped, '5678')), { ok: true });
   assert.strictEqual(await c.unwrapKey(wrapped, '0000'), null);
 });

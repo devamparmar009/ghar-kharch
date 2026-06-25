@@ -1,10 +1,16 @@
 const APP_SALT_STR = 'ghar-kharch::shared-salt::v1';
 const APP_SALT = new TextEncoder().encode(APP_SALT_STR);
 
+function _u8ToB64(u8) {
+  let s = '';
+  for (let i = 0; i < u8.length; i++) s += String.fromCharCode(u8[i]);
+  return btoa(s);
+}
+
 async function _deriveAes(secret, salt, usages) {
   const km = await crypto.subtle.importKey('raw', new TextEncoder().encode(secret), 'PBKDF2', false, ['deriveKey']);
   return crypto.subtle.deriveKey(
-    { name: 'PBKDF2', salt, iterations: 100000, hash: 'SHA-256' },
+    { name: 'PBKDF2', salt, iterations: 210000, hash: 'SHA-256' },
     km, { name: 'AES-GCM', length: 256 }, true, usages
   );
 }
@@ -16,7 +22,7 @@ async function encryptData(data, key) {
   const ct = await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, key, new TextEncoder().encode(JSON.stringify(data)));
   const combined = new Uint8Array(iv.length + ct.byteLength);
   combined.set(iv); combined.set(new Uint8Array(ct), iv.length);
-  return btoa(String.fromCharCode(...combined));
+  return _u8ToB64(combined);
 }
 async function decryptData(b64, key) {
   try {
@@ -29,10 +35,10 @@ async function decryptData(b64, key) {
 async function passphraseHash(passphrase) {
   const combined = new Uint8Array([...new TextEncoder().encode(passphrase + 'gk-verify'), ...APP_SALT]);
   const h = await crypto.subtle.digest('SHA-256', combined);
-  return btoa(String.fromCharCode(...new Uint8Array(h)));
+  return _u8ToB64(new Uint8Array(h));
 }
 async function exportRawKey(key) {
-  return btoa(String.fromCharCode(...new Uint8Array(await crypto.subtle.exportKey('raw', key))));
+  return _u8ToB64(new Uint8Array(await crypto.subtle.exportKey('raw', key)));
 }
 async function importRawKey(b64) {
   const raw = Uint8Array.from(atob(b64), ch => ch.charCodeAt(0));
