@@ -16,3 +16,15 @@
 .toast { background: var(--ink); color: #fff; padding: 10px 16px; border-radius: var(--radius-pill); font-size: 14px; box-shadow: var(--shadow); animation: toastIn 0.25s var(--ease-out); }
 .toast.error { background: var(--bad); }
 @keyframes toastIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+/* Auth overlay */
+#auth-overlay { position: fixed; inset: 0; background: var(--bg); display: none; align-items: center; justify-content: center; z-index: 500; padding: var(--space-4); }
+.auth-card { width: 100%; max-width: 400px; display: flex; flex-direction: column; gap: var(--space-3); }
+.auth-brand { display: flex; flex-direction: column; align-items: center; gap: var(--space-2); padding-bottom: var(--space-2); }
+.auth-brand h1 { font-family: var(--font-head); font-size: 24px; font-weight: 700; margin: 0; color: var(--ink); }
+.auth-brand .icon { color: var(--accent); }
+.auth-error { display: none; background: var(--bad-bg); color: var(--bad); border-radius: var(--radius-sm); padding: 10px 14px; font-size: 14px; font-weight: 500; }
+.auth-card label { font-size: 14px; font-weight: 600; color: var(--ink-2); }
+.auth-card label .muted { font-weight: 400; }
+.auth-card input { width: 100%; min-height: 48px; padding: 12px 14px; border: 1px solid var(--rule-2); border-radius: var(--radius-sm); font-family: var(--font-body); font-size: 15px; color: var(--ink); background: var(--surface); box-sizing: border-box; outline: none; transition: border-color 0.15s; }
+.auth-card input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 20%, transparent); }
