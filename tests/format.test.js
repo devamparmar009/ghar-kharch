@@ -22,3 +22,12 @@ test('daysInMonth handles leap February', () => {
   assert.strictEqual(f.daysInMonth('2024-02'), 29);
   assert.strictEqual(f.daysInMonth('2026-02'), 28);
 });
+
+test('label + day helpers', () => {
+  assert.strictEqual(f.getMonthLabel('2026-06'), 'June 2026');
+  assert.strictEqual(f.getShortMonthLabel('2026-06'), 'Jun 26');
+  assert.strictEqual(f.getDayOfMonth('2026-06-24'), 24);
+  assert.strictEqual(f.formatDate(f.getTodayStr()), 'Today');
+  assert.match(f.getCurrentMonthKey(), /^\d{4}-\d{2}$/);
+  assert.strictEqual(f.generateUUID().length, 36);
+});

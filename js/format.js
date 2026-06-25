@@ -15,13 +15,15 @@ function getCurrentMonthKey() {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
 }
 function getMonthKey(dateStr) { return String(dateStr).substring(0, 7); }
+const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+const SHORT_MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 function getMonthLabel(key) {
-  const [y, m] = key.split('-');
-  return new Date(y, m - 1).toLocaleDateString('en-IN', { month: 'long', year: 'numeric' });
+  const [y, m] = key.split('-').map(Number);
+  return `${MONTHS[m - 1]} ${y}`;
 }
 function getShortMonthLabel(key) {
-  const [y, m] = key.split('-');
-  return new Date(y, m - 1).toLocaleDateString('en-IN', { month: 'short', year: '2-digit' });
+  const [y, m] = key.split('-').map(Number);
+  return `${SHORT_MONTHS[m - 1]} ${String(y).slice(2)}`;
 }
 function getPrevMonthKey(key) {
   const [y, m] = key.split('-').map(Number);
@@ -35,7 +37,8 @@ function getNextMonthKey(key) {
 }
 function formatDate(dateStr) {
   const today = getTodayStr();
-  const yest = new Date(Date.now() - 86400000).toISOString().split('T')[0];
+  const y = new Date(); y.setDate(y.getDate() - 1);
+  const yest = y.toISOString().split('T')[0];
   if (dateStr === today) return 'Today';
   if (dateStr === yest) return 'Yesterday';
   return new Date(dateStr + 'T00:00:00').toLocaleDateString('en-IN', { day: 'numeric', month: 'short' });
