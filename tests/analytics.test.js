@@ -61,9 +61,12 @@ test('yearlySummary aggregates months with data', () => {
   assert.strictEqual(y.total, 8000);
   assert.strictEqual(y.highest.month, '2026-06');
   assert.strictEqual(y.lowest.month, '2026-05');
+  assert.strictEqual(y.monthlyAvg, 4000);
 });
 
 test('smartInsights degrades gracefully with sparse data', () => {
   const ins = a.smartInsights([{ id: '1', amount: 100, category: 'dining', date: '2026-06-01' }], cats, 1000, '2026-06');
   assert.ok(Array.isArray(ins));
+  assert.ok(ins.length > 0);
+  assert.ok(ins.some(s => s.includes('Biggest single day')));
 });

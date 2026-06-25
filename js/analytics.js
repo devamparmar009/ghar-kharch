@@ -1,5 +1,5 @@
 if (typeof module !== 'undefined' && module.exports) {
-  var { getMonthKey, getPrevMonthKey, getShortMonthLabel, daysInMonth, getDayOfMonth, formatCurrency, getCurrentMonthKey } = require('./format.js');
+  var { getMonthKey, getPrevMonthKey, getShortMonthLabel, daysInMonth, formatCurrency } = require('./format.js');
 }
 function _inMonth(expenses, monthKey) { return expenses.filter(e => getMonthKey(e.date) === monthKey); }
 function sumForMonth(expenses, monthKey) { return _inMonth(expenses, monthKey).reduce((s, e) => s + Number(e.amount), 0); }
@@ -51,7 +51,7 @@ function biggestExpenses(expenses, monthKey, n = 5) {
 }
 function yearlySummary(expenses, year) {
   const months = {};
-  expenses.forEach(e => { if (getMonthKey(e.date).startsWith(String(year))) { const k = getMonthKey(e.date); months[k] = (months[k] || 0) + Number(e.amount); } });
+  expenses.forEach(e => { if (getMonthKey(e.date).slice(0, 4) === String(year)) { const k = getMonthKey(e.date); months[k] = (months[k] || 0) + Number(e.amount); } });
   const keys = Object.keys(months); if (!keys.length) return null;
   const entries = keys.map(k => ({ month: k, total: months[k] }));
   const total = entries.reduce((s, e) => s + e.total, 0);
@@ -67,7 +67,7 @@ function smartInsights(expenses, categories, monthlyLimit, monthKey) {
   }
   // under-budget streak
   if (monthlyLimit) {
-    let streak = 0, k = monthKey;
+    let streak = 0, k = getPrevMonthKey(monthKey);
     for (let i = 0; i < 12; i++) { const t = sumForMonth(expenses, k); if (t === 0) break; if (t <= monthlyLimit) streak++; else break; k = getPrevMonthKey(k); }
     if (streak >= 2) out.push(`${streak} months in a row under budget`);
   }
