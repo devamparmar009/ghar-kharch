@@ -1,0 +1,24 @@
+const test = require('node:test');
+const assert = require('node:assert');
+const f = require('../js/format.js');
+
+test('formatCurrency groups in Indian style', () => {
+  assert.strictEqual(f.formatCurrency(120000), '₹1,20,000');
+  assert.strictEqual(f.formatCurrency(1500), '₹1,500');
+  assert.strictEqual(f.formatCurrency(0), '₹0');
+});
+
+test('formatCurrency shows a minus for negatives', () => {
+  assert.strictEqual(f.formatCurrency(-1300), '−₹1,300');
+});
+
+test('month key helpers', () => {
+  assert.strictEqual(f.getMonthKey('2026-06-24'), '2026-06');
+  assert.strictEqual(f.getPrevMonthKey('2026-01'), '2025-12');
+  assert.strictEqual(f.getNextMonthKey('2026-12'), '2027-01');
+});
+
+test('daysInMonth handles leap February', () => {
+  assert.strictEqual(f.daysInMonth('2024-02'), 29);
+  assert.strictEqual(f.daysInMonth('2026-02'), 28);
+});
