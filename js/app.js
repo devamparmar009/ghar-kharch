@@ -33,5 +33,5 @@ function confirmDialog(message, confirmLabel = 'Delete') {
   });
 }
 function bootstrap(onReady) {
-  requireAuth(() => { paintNav(); onReady(); });
+  paintNav(); onReady();
 }

@@ -125,14 +125,13 @@ The nav is the same markup block on all four pages. The active `<a>` gets class 
 Every page shares:
 
 ```
-#auth-overlay   — shown (display:flex) when PIN required; hidden otherwise
 #app            — shown (display:block) when authenticated
   .app-header   — title + icon-btn shortcut
   main.screen   — page-specific content injected here
   nav.bottom-nav
 ```
 
-`#app` starts as `display:none`; `js/auth.js` flips it to `display:block` after PIN verification.
+`#app` is visible on load; there is no login or PIN screen.
 
 ---
 

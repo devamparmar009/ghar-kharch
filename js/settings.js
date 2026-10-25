@@ -9,17 +9,8 @@ async function renderSettings() {
     <section class="card"><div class="section-head"><span>Categories</span><button class="icon-btn" id="add-cat">${icon('plus',20)}</button></div>
       <div id="cat-list">${data.categories.map(c=>`<div class="cat-row"><div class="cat-chip" style="background:${esc(c.color)}22;color:${esc(c.color)}">${icon(c.icon,18)}</div><span>${esc(c.label)}</span><button class="icon-btn" data-del-cat="${esc(c.id)}">${icon('trash',18)}</button></div>`).join('')}</div></section>
 
-    <section class="card"><div class="section-head"><span>PIN</span></div>
-      <div class="row" style="flex-direction:column">
-        <input id="cur-pin" type="password" inputmode="numeric" placeholder="Current PIN" maxlength="6" />
-        <input id="new-pin" type="password" inputmode="numeric" placeholder="New PIN" maxlength="6" />
-        <button class="btn btn-primary btn-full" id="save-pin">Change PIN</button>
-      </div></section>
-
-    <section class="card"><div class="section-head"><span>Sync</span></div>
-      <div id="sync-box">${syncBoxHTML()}</div></section>
-
     <section class="card"><div class="section-head"><span>Data</span></div>
+      <div class="muted" style="margin-bottom:10px">Your expenses are saved only on this device. Export a backup now and then so you never lose them.</div>
       <button class="btn btn-ghost btn-full" id="export">${icon('download',18)} Export backup (JSON)</button>
       <label class="btn btn-ghost btn-full" style="margin-top:8px">${icon('upload',18)} Import backup<input id="import" type="file" accept="application/json" hidden /></label>
       <button class="btn btn-danger btn-full" id="clear" style="margin-top:8px">${icon('trash',18)} Clear all data</button></section>`;
@@ -27,28 +18,9 @@ async function renderSettings() {
   document.getElementById('save-limit').onclick = async () => { await setMonthlyLimit(Number(document.getElementById('limit').value)); showToast('Limit saved'); };
   document.getElementById('add-cat').onclick = () => openCategoryEditor(null, renderSettings);
   document.querySelectorAll('[data-del-cat]').forEach(b => b.onclick = async () => { if (await confirmDialog('Delete this category?')) { await deleteCategory(b.dataset.delCat); renderSettings(); } });
-  document.getElementById('save-pin').onclick = async () => {
-    try { await changePin(document.getElementById('cur-pin').value, document.getElementById('new-pin').value); showToast('PIN changed'); document.getElementById('cur-pin').value=''; document.getElementById('new-pin').value=''; }
-    catch (e) { showToast(e.message, 'error'); }
-  };
   document.getElementById('export').onclick = () => exportJSON();
   document.getElementById('import').onchange = async ev => { const f = ev.target.files[0]; if (!f) return; try { await importJSON(await f.text(), 'replace'); showToast('Imported'); renderSettings(); } catch (e) { showToast(e.message, 'error'); } };
   document.getElementById('clear').onclick = async () => { if (await confirmDialog('Erase ALL expenses and settings on this device?')) { await clearAllData(); showToast('Cleared'); renderSettings(); } };
-  wireSync();
-
-  function syncBoxHTML() {
-    return isSyncEnabled()
-      ? `<div class="muted">Connected · last ${esc(getSyncLastTime()||'—')}</div><button class="btn btn-ghost btn-full" id="sync-now" style="margin-top:8px">${icon('refresh',18)} Sync now</button><button class="btn btn-ghost btn-full" id="disconnect" style="margin-top:8px">Disconnect</button>`
-      : `<div class="muted" style="margin-bottom:10px">Sync your expenses across devices. Paste a GitHub token below — both phones must use the same passphrase.</div><div class="row"><input id="token" type="password" placeholder="GitHub token" /></div><button class="btn btn-primary btn-full" id="connect" style="margin-top:8px">Connect</button>`;
-  }
-  function wireSync() {
-    const connect = document.getElementById('connect');
-    if (connect) connect.onclick = async () => { try { connect.textContent='Connecting…'; const r = await connectSync(document.getElementById('token').value); showToast('Sync ' + r.action); renderSettings(); } catch (e) { showToast(e.message, 'error'); connect.textContent='Connect'; } };
-    const now = document.getElementById('sync-now');
-    if (now) now.onclick = async () => { try { await pullFromGist(); await pushToGist(); showToast('Synced'); renderSettings(); } catch (e) { showToast(e.message, 'error'); } };
-    const dc = document.getElementById('disconnect');
-    if (dc) dc.onclick = async () => { await disconnectSync(); showToast('Disconnected'); renderSettings(); };
-  }
 }
 function openCategoryEditor(existing, done) {
   const o = document.createElement('div'); o.className = 'modal-overlay';
